@@ -23,8 +23,7 @@ const register = async (payload) => {
   let { password, ...rest } = payload;
   rest.password = await bcrypt.hash(password, +process.env.SALT_ROUND);
   const user = await userModel.create(rest);
-  const authPayload = { email: user?.email, token: generateOTP() };
-  await authModel.create(authPayload);
+  await authModel.create({ email: user?.email, token: generateOTP() });
   return user;
 };
 
