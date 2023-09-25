@@ -10,9 +10,12 @@ const generateJWT = (payload) => {
   );
 };
 
-const verifyJWT = () => {
-  const d = JWT.verify(token, process.env.JWT_SECRET);
-  return d;
+const verifyJWT = (token) => {
+  try {
+    return JWT.verify(token, process.env.JWT_SECRET);
+  } catch (e) {
+    throw new Error("Token is invalid");
+  }
 };
 
 module.exports = { generateJWT, verifyJWT };

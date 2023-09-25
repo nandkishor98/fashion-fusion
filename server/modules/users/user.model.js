@@ -24,6 +24,12 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
+    select: false,
+  },
+  roles: {
+    type: Array,
+    default: ["user"],
+    required: true,
   },
   isActive: { type: Boolean, default: true },
   ...commonSchema,
