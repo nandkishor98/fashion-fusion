@@ -11,6 +11,7 @@ const login = async (email, password) => {
   const user = await userModel
     .findOne({
       email,
+      isArchived: false,
     })
     .select("+password");
   if (!user) throw new Error("User doesn't exist");
@@ -74,4 +75,30 @@ const verifyEmail = async (email, token) => {
   return true;
 };
 
-module.exports = { login, regenerateToken, register, verifyEmail };
+const forgetPassword = async (email, token, password) => {
+  const user = await userModel.findOne({
+    isArchived: false,
+    email,
+  });
+  if (!user) throw new Error("User doesn't exist");
+  const fpToken = generateOTP();
+  await mailer(user?.email, fpToken);
+  await authModel.create({ email: email, token: fpToken });
+  const isValidToken = await verifyOTP(token);
+  if (!isValidToken) throw new Error("Token expired");
+  await userModel.findOneAndUpdate(
+    { email },
+    { password: await bcrypt.hash(password, +process.env.SALT_ROUND) },
+    { new: true }
+  );
+  await authModel.deleteOne({ email });
+  return true;
+};
+
+module.exports = {
+  forgetPassword,
+  login,
+  regenerateToken,
+  register,
+  verifyEmail,
+};
