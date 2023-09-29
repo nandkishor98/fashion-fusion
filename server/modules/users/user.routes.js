@@ -1,10 +1,25 @@
+const multer = require("multer");
 const router = require("express").Router();
 const Controller = require("./user.controller");
 const secureAPI = require("../../utils/secure");
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/users");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "." + file.originalname.split(".")[1];
+    cb(null, uniqueSuffix);
+  },
+});
+
+const upload = multer({ storage: storage });
+
 router.get("/", secureAPI(["admin"]), async (req, res, next) => {
   try {
-    const result = await Controller.list();
+    const { size, page, name, role } = req.query;
+    const search = { name, role };
+    const result = await Controller.list(size, page, search);
     res.json({ data: result, msg: "success" });
   } catch (e) {
     next(e);
@@ -20,22 +35,29 @@ router.get("/profile", secureAPI(["admin", "user"]), async (req, res, next) => {
   }
 });
 
-router.put("/profile", secureAPI(["admin", "user"]), async (req, res, next) => {
-  try {
-    if (req.currentRoles.includes("admin")) {
+router.put(
+  "/profile",
+  secureAPI(["admin", "user"]),
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      if (req?.file) {
+        req.body.image = "users/".concat(req.file.filename);
+      }
       const { id, ...rest } = req.body;
       rest.created_by = req.currentUser;
       rest.updated_by = req.currentUser;
-      const result = await Controller.updateById(id, rest);
+      const me = req.currentRoles.includes("admin")
+        ? req.body.id
+        : req.currentUser;
+      if (!me) throw new Error("User ID is required");
+      const result = await Controller.updateById(me, rest);
       res.json({ data: result, msg: "success" });
-    } else {
-      const result = await Controller.updateById(req.currentUser, req.body);
-      res.json({ data: result, msg: "success" });
+    } catch (e) {
+      next(e);
     }
-  } catch (e) {
-    next(e);
   }
-});
+);
 
 router.put("/change-password", secureAPI(["user"]), async (req, res, next) => {
   try {

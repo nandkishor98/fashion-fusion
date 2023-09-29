@@ -27,6 +27,7 @@ const userSchema = new Schema({
     default: ["user"],
     required: true,
   },
+  image: { type: String },
   isActive: { type: Boolean, default: true },
   ...commonSchema,
 });

@@ -75,15 +75,25 @@ const verifyEmail = async (email, token) => {
   return true;
 };
 
-const forgetPassword = async (email, token, password) => {
+const generateFPToken = async (email) => {
+  //system check email
   const user = await userModel.findOne({
+    email,
+    isActive: true,
     isArchived: false,
+  });
+  if (!user) throw new Error("User doesn't exist");
+  const token = generateOTP();
+  await authModel.create({ email, token });
+  mailer(email, token);
+  return true;
+};
+
+const forgetPassword = async (email, token, password) => {
+  const user = await authModel.findOne({
     email,
   });
   if (!user) throw new Error("User doesn't exist");
-  const fpToken = generateOTP();
-  await mailer(user?.email, fpToken);
-  await authModel.create({ email: email, token: fpToken });
   const isValidToken = await verifyOTP(token);
   if (!isValidToken) throw new Error("Token expired");
   await userModel.findOneAndUpdate(
@@ -97,6 +107,7 @@ const forgetPassword = async (email, token, password) => {
 
 module.exports = {
   forgetPassword,
+  generateFPToken,
   login,
   regenerateToken,
   register,
