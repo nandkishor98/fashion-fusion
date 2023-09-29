@@ -133,3 +133,5 @@ dist
 # My Test
 .DS_Store
 playground
+server/public/users
+server/public/products
