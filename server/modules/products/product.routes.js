@@ -15,10 +15,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get("/", secureAPI([]), async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    const { limit, page, name } = req.query;
-    const search = { name };
+    const { limit, page, name, isArchived } = req.query;
+    const search = { name, isArchived };
     const result = await Controller.list(limit, page, search);
     res.json({ data: result, msg: "success" });
   } catch (e) {
@@ -26,28 +26,23 @@ router.get("/", secureAPI([]), async (req, res, next) => {
   }
 });
 
-router.post(
-  "/",
-  secureAPI(["admin"]),
-  upload.array("images", 4),
-  async (req, res, next) => {
-    try {
-      if (req.files) {
-        req.body.images = [];
-        req.files.map((file) =>
-          req.body.images.push("products/".concat(file.filename))
-        );
-      }
-      req.body.created_by = req.currentUser;
-      const result = await Controller.create(req.body);
-      res.json({ data: result, msg: "success" });
-    } catch (e) {
-      next(e);
+router.post("/", upload.array("images", 4), async (req, res, next) => {
+  try {
+    if (req.files) {
+      req.body.images = [];
+      req.files.map((file) =>
+        req.body.images.push("products/".concat(file.filename))
+      );
     }
+    req.body.created_by = req.currentUser;
+    const result = await Controller.create(req.body);
+    res.json({ data: result, msg: "success" });
+  } catch (e) {
+    next(e);
   }
-);
+});
 
-router.get("/:id", secureAPI([]), async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const result = await Controller.getById(req.params.id);
     res.json({ data: result, msg: "success" });
@@ -56,21 +51,26 @@ router.get("/:id", secureAPI([]), async (req, res, next) => {
   }
 });
 
-router.put("/:id", secureAPI(["admin"]), async (req, res, next) => {
-  try {
-    if (req.files) {
-      req.body.images = [];
-      req.files.map((file) =>
-        req.body.images.push("products/".concat(file.filename))
-      );
+router.put(
+  "/:id",
+  secureAPI(["admin"]),
+  upload.array("images", 4),
+  async (req, res, next) => {
+    try {
+      if (req.files.length > 0) {
+        req.body.images = [];
+        req.files.map((file) =>
+          req.body.images.push("products/".concat(file.filename))
+        );
+      }
+      req.body.updated_by = req.currentUser;
+      const result = await Controller.updateById(req.params.id, req.body);
+      res.json({ data: result, msg: "success" });
+    } catch (e) {
+      next(e);
     }
-    req.body.updated_by = req.currentUser;
-    const result = await Controller.updateById(req.params.id, req.body);
-    res.json({ data: result, msg: "success" });
-  } catch (e) {
-    next(e);
   }
-});
+);
 
 router.delete("/:id", secureAPI(["admin"]), async (req, res, next) => {
   try {

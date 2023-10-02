@@ -13,7 +13,7 @@ const create = async (payload) => {
 
 const list = async (limit, page, search) => {
   const pageNum = parseInt(page) || 1;
-  const size = parseInt(size) || 5;
+  const size = parseInt(limit) || 5;
   const { name, role } = search;
   const query = {};
   if (name) {
@@ -82,11 +82,10 @@ const updateById = async (id, payload) => {
 };
 
 const deleteById = async (id, payload) => {
-  const category = await Model.findOne({ _id: id });
-  const isUsed = productModel.findOne({ category: category._id });
+  const isUsed = await productModel.findOne({ category: id });
   if (isUsed)
     throw new Error(
-      `${category.name} is in used. Please remove from product before deleting`
+      `Category is in use. Please remove from product name ${isUsed.name} before deleting`
     );
   return Model.deleteOne({ _id: id });
 };

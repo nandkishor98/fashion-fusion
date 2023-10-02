@@ -2,7 +2,7 @@ const router = require("express").Router();
 const secureAPI = require("../../utils/secure");
 const Controller = require("./category.controller");
 
-router.get("/", secureAPI(["admin", "user"]), async (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
     const { limit, page, name } = req.query;
     const search = { name };
@@ -23,7 +23,7 @@ router.post("/", secureAPI(["admin"]), async (req, res, next) => {
   }
 });
 
-router.get("/:id", secureAPI(["admin", "user"]), async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const result = await Controller.getById(req.params.id);
     res.json({ data: result, msg: "success" });

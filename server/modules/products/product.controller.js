@@ -4,17 +4,23 @@ const create = (payload) => {
   return Model.create(payload);
 };
 
-const list = async (size, page, search) => {
+const list = async (limit, page, search) => {
   const pageNum = parseInt(page) || 1;
-  const size = parseInt(size) || 5;
-  const { name } = search;
-  const query = {};
+  const size = parseInt(limit) || 5;
+  const { name, isArchived } = search;
+  const query = [];
   if (name) {
-    query.name = new RegExp(name, "gi");
+    query.push({
+      $match: {
+        name: new RegExp(name, "gi"),
+      },
+    });
   }
-  const response = await Model.aggregate([
+  query.push(
     {
-      $match: query,
+      $match: {
+        isArchived: isArchived || false,
+      },
     },
     {
       $sort: {
@@ -55,8 +61,9 @@ const list = async (size, page, search) => {
       $project: {
         "data.password": 0,
       },
-    },
-  ]).allowDiskUse(true);
+    }
+  );
+  const response = await Model.aggregate(query).allowDiskUse(true);
   const newData = response[0];
   let { data, total } = newData;
   total = total || 0;
