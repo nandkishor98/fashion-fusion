@@ -130,8 +130,11 @@ dist
 .pnp.*
 
 
-# My Test
+# My Envs
 .DS_Store
 playground
-server/public/users
-server/public/products
+server/public/users/*
+server/public/products/*
+
+!server/public/users/.gitkeep
+!server/public/products/.gitkeep
