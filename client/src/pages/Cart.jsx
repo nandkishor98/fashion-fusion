@@ -1,22 +1,53 @@
 import { Image } from "react-bootstrap";
+import numberFormatter from "number-formatter";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { BsArrowLeftSquare } from "react-icons/bs";
 
 import { useDispatch, useSelector } from "react-redux";
-import { removeItem } from "../slices/cartSlice";
+import {
+  removeItem,
+  increaseQuantity,
+  decreaseQuantity,
+} from "../slices/cartSlice";
 
 const Cart = () => {
   const dispatch = useDispatch();
+  const { cart } = useSelector((state) => state.cart);
+
+  const getTotal = () => {
+    return cart.reduce((acc, obj) => {
+      return acc + obj.quantity * obj.price;
+    }, 0);
+  };
+
   const removeFromCart = (id) => {
     if (id) {
       dispatch(removeItem(id));
     }
   };
-  const { cart } = useSelector((state) => state.cart);
+
+  const increase = (id) => {
+    if (id) {
+      dispatch(increaseQuantity(id));
+    }
+  };
+
+  const decrease = (id) => {
+    if (id) {
+      dispatch(decreaseQuantity(id));
+    }
+  };
+
   return (
     <>
       {cart.length > 0 ? (
-        <FilledCart items={cart} removeFromCart={removeFromCart} />
+        <FilledCart
+          items={cart}
+          removeFromCart={removeFromCart}
+          increase={increase}
+          decrease={decrease}
+          getTotal={getTotal}
+        />
       ) : (
         <EmptyCart />
       )}
@@ -24,7 +55,13 @@ const Cart = () => {
   );
 };
 
-const FilledCart = ({ items, removeFromCart }) => {
+const FilledCart = ({
+  items,
+  removeFromCart,
+  increase,
+  decrease,
+  getTotal,
+}) => {
   return (
     <>
       <>
@@ -36,9 +73,9 @@ const FilledCart = ({ items, removeFromCart }) => {
                 <tr>
                   <th>Name</th>
                   <th>Image</th>
-                  <th>Price</th>
+                  <th>Price (NPR)</th>
                   <th>Quantity</th>
-                  <th>Total Price</th>
+                  <th>Total Price (NPR)</th>
                   <th></th>
                 </tr>
               </thead>
@@ -55,11 +92,16 @@ const FilledCart = ({ items, removeFromCart }) => {
                           thumbnail
                         />
                       </td>
-                      <td>{item?.price}</td>
+                      <td>
+                        {numberFormatter("#,##,###.##", Number(item?.price))}
+                      </td>
                       <td>
                         <span
                           className="btn btn-primary"
                           style={{ margin: "2px" }}
+                          onClick={() => {
+                            decrease(item?.id);
+                          }}
                         >
                           -
                         </span>
@@ -67,11 +109,20 @@ const FilledCart = ({ items, removeFromCart }) => {
                         <span
                           className="btn btn-primary"
                           style={{ margin: "2px" }}
+                          onClick={() => {
+                            increase(item?.id);
+                          }}
                         >
                           +
                         </span>
                       </td>
-                      <td>{Number(item?.price) * Number(item?.quantity)}</td>
+                      <td>
+                        {numberFormatter(
+                          "#,##,###.##",
+                          Number(item?.price) * Number(item?.quantity)
+                        )}
+                      </td>
+
                       <td>
                         <AiFillCloseCircle
                           color="red"
@@ -86,7 +137,9 @@ const FilledCart = ({ items, removeFromCart }) => {
                 })}
                 <tr>
                   <td colSpan="5">Total Carts</td>
-                  <td>Total Amount</td>
+                  <td>
+                    {numberFormatter("NPR #,##,###.##", Number(getTotal()))}
+                  </td>
                 </tr>
               </tbody>
             </table>
