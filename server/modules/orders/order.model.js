@@ -21,7 +21,8 @@ const orderSchema = new Schema({
   },
   payment: { type: String, default: "COD" },
   address: { type: String },
-  buyer: { type: String, required: true },
+  email: { type: String },
+  name: { type: String, required: true },
   status: { type: String, enum: ["pending", "completed"], default: "pending" },
   ...commonSchema,
 });

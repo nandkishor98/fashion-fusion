@@ -30,12 +30,21 @@
 .product-card-10 .product-media {
   position: relative;
   overflow: hidden;
+  height: 280px;
+  max-width: 400px; /* Set a maximum width for the div */
   border-bottom: 1px solid var(--bs-gray-300);
+  margin: 0 auto; /* Center the div horizontally */
+  padding: 10px; /* Add some padding for spacing */
 }
 
 .product-card-10 .product-media img {
   transition: ease all 0.35s;
   transform: scale(1);
+  max-width: 250px;
+  max-height: 250px;
+  object-fit: contain;
+  height: 100%;
+  width: 100%;
 }
 
 .product-card-10 .product-action {

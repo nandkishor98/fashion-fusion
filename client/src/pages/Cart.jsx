@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Image } from "react-bootstrap";
 import numberFormatter from "number-formatter";
 import { AiFillCloseCircle } from "react-icons/ai";
@@ -64,88 +65,98 @@ const FilledCart = ({
 }) => {
   return (
     <>
-      <>
-        <h1 className="text-center m-5">Your Cart</h1>
-        <div className="row">
-          <div className="col-md-12">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Image</th>
-                  <th>Price (NPR)</th>
-                  <th>Quantity</th>
-                  <th>Total Price (NPR)</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item, index) => {
-                  return (
-                    <tr key={item?.id || index}>
-                      <td>{item?.name}</td>
-                      <td>
-                        <Image
-                          width={40}
-                          height={40}
-                          src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80"
-                          thumbnail
-                        />
-                      </td>
-                      <td>
-                        {numberFormatter("#,##,###.##", Number(item?.price))}
-                      </td>
-                      <td>
-                        <span
-                          className="btn btn-primary"
-                          style={{ margin: "2px" }}
-                          onClick={() => {
-                            decrease(item?.id);
-                          }}
-                        >
-                          -
-                        </span>
-                        <span className="btn btn-info">{item?.quantity}</span>
-                        <span
-                          className="btn btn-primary"
-                          style={{ margin: "2px" }}
-                          onClick={() => {
-                            increase(item?.id);
-                          }}
-                        >
-                          +
-                        </span>
-                      </td>
-                      <td>
-                        {numberFormatter(
-                          "#,##,###.##",
-                          Number(item?.price) * Number(item?.quantity)
-                        )}
-                      </td>
+      <h1 className="text-center m-4">Your Cart</h1>
+      <div className="row">
+        <div className="col-md-12">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Price (NPR)</th>
+                <th>Quantity</th>
+                <th>Total Price (NPR)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, index) => {
+                return (
+                  <tr key={item?.id || index}>
+                    <td>
+                      {item?.title.length > 25
+                        ? item?.title.substring(0, 60).concat("...")
+                        : item?.title}
+                    </td>
+                    <td>
+                      <Image
+                        width={40}
+                        height={40}
+                        src={item?.image}
+                        thumbnail
+                      />
+                    </td>
+                    <td>
+                      {numberFormatter("#,##,###.##", Number(item?.price))}
+                    </td>
+                    <td>
+                      <span
+                        className="btn btn-primary"
+                        style={{ margin: "2px" }}
+                        onClick={() => {
+                          decrease(item?.id);
+                        }}
+                      >
+                        -
+                      </span>
+                      <span className="btn btn-info">{item?.quantity}</span>
+                      <span
+                        className="btn btn-primary"
+                        style={{ margin: "2px" }}
+                        onClick={() => {
+                          increase(item?.id);
+                        }}
+                      >
+                        +
+                      </span>
+                    </td>
+                    <td>
+                      {numberFormatter(
+                        "#,##,###.##",
+                        Number(item?.price) * Number(item?.quantity)
+                      )}
+                    </td>
 
-                      <td>
-                        <AiFillCloseCircle
-                          color="red"
-                          size={24}
-                          onClick={() => {
-                            removeFromCart(item?.id);
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-                <tr>
-                  <td colSpan="5">Total Carts</td>
-                  <td>
-                    {numberFormatter("NPR #,##,###.##", Number(getTotal()))}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                    <td>
+                      <AiFillCloseCircle
+                        color="red"
+                        size={24}
+                        onClick={() => {
+                          removeFromCart(item?.id);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+              <tr>
+                <td colSpan="5">Total Carts</td>
+                <td>
+                  {numberFormatter("NPR #,##,###.##", Number(getTotal()))}
+                </td>
+              </tr>
+              <tr>
+                <td colSpan="5">
+                  <Link to="/products">Continue Shopping</Link>
+                </td>
+                <td>
+                  <Link to="/checkout">Check Out Now</Link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </>
+      </div>
     </>
   );
 };

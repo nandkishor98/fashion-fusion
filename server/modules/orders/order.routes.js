@@ -13,7 +13,7 @@ router.get("/", secureAPI(["admin"]), async (req, res, next) => {
   }
 });
 
-router.post("/", secureAPI(["admin"]), async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     req.body.created_by = req.currentUser;
     const result = await Controller.create(req.body);

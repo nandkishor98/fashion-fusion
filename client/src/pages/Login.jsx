@@ -1,112 +1,113 @@
-import "./Login.css";
+import { useState } from "react";
+import { Button, Col, Form, Row, Tab, Tabs } from "react-bootstrap";
 
 const Login = () => {
+  const [key, setKey] = useState("login");
   return (
-    <div className="mt-4 login-body">
-      <div className="row">
-        <div className="col-md-6 mx-auto p-0">
-          <div className="card">
-            <div className="login-box">
-              <div className="login-snip">
-                <input
-                  id="tab-1"
-                  type="radio"
-                  name="tab"
-                  className="sign-in"
-                  checked
-                />
-                <label htmlFor="tab-1" className="tab">
-                  Login
-                </label>
-                <input id="tab-2" type="radio" name="tab" className="sign-up" />
-                <label htmlFor="tab-2" className="tab">
-                  Sign Up
-                </label>
-                <div className="login-space">
-                  <div className="login">
-                    <div className="group">
-                      <label htmlFor="user" className="label">
-                        Email
-                      </label>
-                      <input
-                        id="user"
-                        type="text"
-                        className="input"
-                        placeholder="Enter your email"
-                      />
-                    </div>
-                    <div className="group">
-                      <label htmlFor="pass" className="label">
-                        Password
-                      </label>
-                      <input
-                        id="pass"
-                        type="password"
-                        className="input"
-                        data-type="password"
-                        placeholder="Enter your password"
-                      />
-                    </div>
-                    <div className="group">
-                      <input type="submit" className="button" value="Sign In" />
-                    </div>
-                    <div className="hr"></div>
-                    <div className="foot">
-                      <a href="#">Forgot Password?</a>
-                    </div>
-                  </div>
-                  <div className="sign-up-form">
-                    <div className="group">
-                      <label htmlFor="pass" className="label">
-                        Email Address
-                      </label>
-                      <input
-                        id="pass"
-                        type="text"
-                        className="input"
-                        placeholder="Enter your email address"
-                      />
-                    </div>
-                    <div className="group">
-                      <label htmlFor="pass" className="label">
-                        Password
-                      </label>
-                      <input
-                        id="pass"
-                        type="password"
-                        className="input"
-                        data-type="password"
-                        placeholder="Create your password"
-                      />
-                    </div>
-                    <div className="group">
-                      <label htmlFor="pass" className="label">
-                        Repeat Password
-                      </label>
-                      <input
-                        id="pass"
-                        type="password"
-                        className="input"
-                        data-type="password"
-                        placeholder="Repeat your password"
-                      />
-                    </div>
-
-                    <div className="group">
-                      <input type="submit" className="button" value="Sign Up" />
-                    </div>
-                    <div className="hr"></div>
-                    <div className="foot">
-                      <label htmlFor="tab-1">Already Member?</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="container w-50">
+      <Tabs
+        id="controlled-tab-example"
+        activeKey={key}
+        onSelect={(k) => setKey(k)}
+        className="mb-3 "
+      >
+        <Tab eventKey="login" title="Login">
+          <LoginForm />
+        </Tab>
+        <Tab eventKey="signup" title="Sign Up">
+          <SignUpForm />
+        </Tab>
+      </Tabs>
     </div>
+  );
+};
+
+const SignUpForm = () => {
+  const [validated, setValidated] = useState(false);
+
+  const checkFormValidity = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    console.log({ valid: form.checkValidity() });
+    setValidated(true);
+  };
+
+  const handleSubmit = () => {};
+
+  return (
+    <>
+      <Form
+        className="d-grid gap-2"
+        noValidate
+        validated={validated}
+        onSubmit={handleSubmit}
+        onChange={checkFormValidity}
+      >
+        <Form.Group
+          as={Col}
+          md="12"
+          className="mb-3"
+          controlId="validationCustom01"
+        >
+          <Form.Label>Full name</Form.Label>
+          <Form.Control required type="text" placeholder="Full name" />
+          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group
+          as={Col}
+          md="12"
+          className="mb-3"
+          controlId="validationCustom02"
+        >
+          <Form.Label>Email</Form.Label>
+          <Form.Control required type="email" placeholder="Your Valid Email" />
+          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+        </Form.Group>
+        <Row className="mb-3">
+          <Form.Group as={Col} md="6" controlId="validationCustom03">
+            <Form.Label>Password</Form.Label>
+            <Form.Control required type="password" placeholder="Password" />
+            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group as={Col} md="6" controlId="validationCustom04">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
+              required
+              type="password"
+              placeholder="Confirm Password"
+            />
+            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+          </Form.Group>
+        </Row>
+        <Button type="submit" size="lg">
+          Register
+        </Button>
+      </Form>
+    </>
+  );
+};
+
+const LoginForm = () => {
+  return (
+    <Form className="d-grid gap-2">
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Email address</Form.Label>
+        <Form.Control type="email" placeholder="Enter email" />
+        <Form.Text className="text-muted">
+          We&apos;ll never share your email with anyone else.
+        </Form.Text>
+      </Form.Group>
+      <Form.Group className="mb-3" controlId="formBasicPassword">
+        <Form.Label>Password</Form.Label>
+        <Form.Control type="password" placeholder="Password" />
+      </Form.Group>
+      <Button variant="primary" type="submit" size="lg">
+        Login
+      </Button>
+    </Form>
   );
 };
 
