@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
+    "axios": "^1.5.1",
     "bootstrap": "^5.3.2",
     "favicons": "^7.1.4",
     "number-formatter": "^1.2.0",

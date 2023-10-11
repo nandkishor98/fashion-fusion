@@ -1,4 +1,6 @@
 import "./Products.css";
+import {AiOutlineEye} from 'react-icons/ai'
+import {AiOutlineShoppingCart} from 'react-icons/ai'
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -75,7 +77,7 @@ const Products = () => {
                               className="btn"
                               to={`/products/${product?.id}`}
                             >
-                              <i className="fa fa-eye"></i>
+                              <i className="AiOutlineEye"><AiOutlineEye/></i>
                             </Link>
                             <button
                               className="btn"
@@ -83,7 +85,7 @@ const Products = () => {
                                 dispatch(addToCart(product));
                               }}
                             >
-                              <i className="fa fa-shopping-cart"></i>
+                              <i className="AiOutlineShoppingCart"><AiOutlineShoppingCart/></i>
                             </button>
                           </div>
                         </div>
