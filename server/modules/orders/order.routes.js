@@ -1,6 +1,11 @@
+const express = require("express");
 const router = require("express").Router();
+const stripe = require("stripe")(process.env.SECRET_KEY);
 const Controller = require("./order.controller");
 const secureAPI = require("../../utils/secure");
+
+const FRONTEND_URL = process.env.FRONTEND_URL;
+const endpointSecret = process.env.ENDPOINT_SECRET;
 
 router.get("/", secureAPI(["admin"]), async (req, res, next) => {
   try {
@@ -15,7 +20,6 @@ router.get("/", secureAPI(["admin"]), async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    req.body.created_by = req.currentUser;
     const result = await Controller.create(req.body);
     res.json({ data: result, msg: "success" });
   } catch (e) {
@@ -59,6 +63,23 @@ router.delete("/:id", secureAPI(["admin"]), async (req, res, next) => {
     const payload = { updated_by: req.currentUser };
     const result = await Controller.deleteById(req.params.id, payload);
     res.json({ data: result, msg: "success" });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post("/create-checkout-session", async (req, res, next) => {
+  try {
+    const added30Mins = new Date();
+    added30Mins.setMinutes(added30Mins.getMinutes() + 30);
+    const session = await stripe.checkout.sessions.create({
+      line_items: req.body,
+      mode: "payment",
+      success_url: `${FRONTEND_URL}/checkout/success`,
+      cancel_url: `${FRONTEND_URL}/checkout/failed`,
+      expires_at: added30Mins,
+    });
+    res.json({ data: { id: session.id, url: session.url }, msg: "success" });
   } catch (e) {
     next(e);
   }
