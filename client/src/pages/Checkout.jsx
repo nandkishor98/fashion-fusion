@@ -1,44 +1,98 @@
 import "./Checkout.css";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { create } from "../slices/orderSlice";
+import { removeAll } from "../slices/cartSlice";
+import { URLS } from "../constants";
+import API from "../utils/api";
 
 export default function Checkout() {
+  const [stripeCheckout, setStripeCheckoutUrl] = useState({
+    stripeId: "",
+    url: "",
+  });
+  const navigate = useNavigate();
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const [checkout, setCheckout] = useState({
     name: "",
     email: "",
     address: "",
-    payment: "",
+    paymentMethod: "COD",
     amount: 0,
     country: "",
     state: "",
     pobox: "",
-    products: [],
   });
 
   const getTotal = () => {
     return cart.reduce((acc, obj) => acc + obj.price * obj.quantity, 0);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = checkout;
-    const { address, pobox, state, country, payment, ...rest } = payload;
-    rest.address = address + state + country + pobox;
+    const { address, pobox, state, country, ...rest } = payload;
+    rest.address = address.concat(", ", state, ", ", pobox, ", ", country);
     rest.amount = getTotal();
     const products = cart.map((item) => {
       return {
-        product: item?.id,
-        quantity: item?.quantity,
-        price: item?.price,
+        product: item?._id,
+        quantity: Number(item?.quantity),
+        price: Number(item?.price),
         amount: Number(item?.quantity) * Number(item?.price),
       };
     });
     rest.products = products;
-    dispatch(create(rest));
+    rest.orderId = stripeCheckout?.stripeId;
+    const data = await dispatch(create(rest));
+    if (data && data.payload.msg === "success") {
+      dispatch(removeAll());
+      checkout?.paymentMethod === "STRIPE"
+        ? window.location.replace(stripeCheckout?.url)
+        : navigate("/checkout/success");
+    } else {
+      navigate("/checkout/failed");
+    }
   };
+
+  const createPayments = useCallback(() => {
+    return cart.map((item) => {
+      return {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: item?.name,
+          },
+          unit_amount: Number(item?.price),
+        },
+        quantity: Number(item?.quantity),
+      };
+    });
+  }, [cart]);
+
+  const createPaymentIntent = useCallback(async () => {
+    try {
+      const data = createPayments();
+      const response = await API.post(
+        `${URLS.ORDERS}/create-checkout-session`,
+        data
+      );
+      const cs = response.data;
+      setStripeCheckoutUrl((prev) => ({
+        ...prev,
+        stripeId: cs.data.id,
+        url: cs.data.url,
+      }));
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }, [createPayments]);
+
+  useEffect(() => {
+    createPaymentIntent();
+  }, [createPaymentIntent]);
   return (
     <>
       <div className="row">
@@ -61,9 +115,9 @@ export default function Checkout() {
                           {item?.quantity}
                         </span>
                         &nbsp;
-                        {item?.title.length > 25
-                          ? item?.title.substring(0, 28).concat("...")
-                          : item?.title}
+                        {item?.name.length > 25
+                          ? item?.name.substring(0, 28).concat("...")
+                          : item?.name}
                       </h6>
                       <small className="text-muted">
                         {" "}
@@ -228,8 +282,12 @@ export default function Checkout() {
                 type="radio"
                 name="inlineRadioOptions"
                 value="COD"
-                disabled
-                checked
+                checked={checkout?.paymentMethod === "COD" ? true : false}
+                onChange={() => {
+                  setCheckout((prev) => {
+                    return { ...prev, paymentMethod: "COD" };
+                  });
+                }}
               />
               <label className="form-check-label" htmlFor="inlineRadio1">
                 Cash on delivery
@@ -240,118 +298,18 @@ export default function Checkout() {
                 className="form-check-input"
                 type="radio"
                 name="inlineRadioOptions"
-                value="CC"
-                disabled
+                value="STRIPE"
+                checked={checkout?.paymentMethod === "STRIPE" ? true : false}
+                onChange={() => {
+                  setCheckout((prev) => {
+                    return { ...prev, paymentMethod: "STRIPE" };
+                  });
+                }}
               />
               <label className="form-check-label" htmlFor="inlineRadio2">
-                Credit Card / Debit Card
+                Stripe
               </label>
             </div>
-            <div className="form-check form-check-inline">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="inlineRadioOptions"
-                value="Paypal"
-                disabled
-              />
-              <label className="form-check-label" htmlFor="inlineRadio3">
-                Paypal
-              </label>
-            </div>
-
-            {/* <div className="d-block my-3">
-              <div className="custom-control custom-radio">
-                <input
-                  id="credit"
-                  name="paymentMethod"
-                  type="radio"
-                  className="custom-control-input"
-                  checked
-                  required
-                />
-                <label className="custom-control-label" htmlFor="credit">
-                  Credit card
-                </label>
-              </div>
-              <div className="custom-control custom-radio">
-                <input
-                  id="debit"
-                  name="paymentMethod"
-                  type="radio"
-                  className="custom-control-input"
-                  required
-                />
-                <label className="custom-control-label" htmlFor="debit">
-                  Debit card
-                </label>
-              </div>
-              <div className="custom-control custom-radio">
-                <input
-                  id="paypal"
-                  name="paymentMethod"
-                  type="radio"
-                  className="custom-control-input"
-                  required
-                />
-                <label className="custom-control-label" htmlFor="paypal">
-                  Paypal
-                </label>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label htmlFor="cc-name">Name on card</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="cc-name"
-                  placeholder=""
-                  required
-                />
-                <small className="text-muted">
-                  Full name as displayed on card
-                </small>
-                <div className="invalid-feedback">Name on card is required</div>
-              </div>
-              <div className="col-md-6 mb-3">
-                <label htmlFor="cc-number">Credit card number</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="cc-number"
-                  placeholder=""
-                  required
-                />
-                <div className="invalid-feedback">
-                  Credit card number is required
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-3 mb-3">
-                <label htmlFor="cc-expiration">Expiration</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="cc-expiration"
-                  placeholder=""
-                  required
-                />
-                <div className="invalid-feedback">Expiration date required</div>
-              </div>
-              <div className="col-md-3 mb-3">
-                <label htmlFor="cc-expiration">CVV</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="cc-cvv"
-                  placeholder=""
-                  required
-                />
-                <div className="invalid-feedback">Security code required</div>
-              </div>
-            </div> */}
             <hr className="mb-4" />
 
             <div className="d-grid gap-2">

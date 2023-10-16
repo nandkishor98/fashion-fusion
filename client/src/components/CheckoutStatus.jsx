@@ -1,6 +1,6 @@
 import "./CheckoutStatus.css";
 
-export const SuccessCheckout = ({
+export const CheckoutPageStatus = ({
   type = "success",
   msgHeader = "Success",
   msg,
@@ -23,8 +23,4 @@ export const SuccessCheckout = ({
       </div>
     </div>
   );
-};
-
-export const FailedCheckout = () => {
-  return <></>;
 };

@@ -14,6 +14,7 @@ import {
 const Cart = () => {
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.cart);
+  const { products } = useSelector((state) => state.products);
 
   const getTotal = () => {
     return cart.reduce((acc, obj) => {
@@ -43,6 +44,7 @@ const Cart = () => {
     <>
       {cart.length > 0 ? (
         <FilledCart
+          products={products}
           items={cart}
           removeFromCart={removeFromCart}
           increase={increase}
@@ -58,6 +60,7 @@ const Cart = () => {
 
 const FilledCart = ({
   items,
+  products,
   removeFromCart,
   increase,
   decrease,
@@ -82,17 +85,17 @@ const FilledCart = ({
             <tbody>
               {items.map((item, index) => {
                 return (
-                  <tr key={item?.id || index}>
+                  <tr key={item?._id || index}>
                     <td>
-                      {item?.title.length > 25
-                        ? item?.title.substring(0, 60).concat("...")
-                        : item?.title}
+                      {item?.name.length > 25
+                        ? item?.name.substring(0, 60).concat("...")
+                        : item?.name}
                     </td>
                     <td>
                       <Image
                         width={40}
                         height={40}
-                        src={item?.image}
+                        src={item?.images[0]}
                         thumbnail
                       />
                     </td>
@@ -104,7 +107,7 @@ const FilledCart = ({
                         className="btn btn-primary"
                         style={{ margin: "2px" }}
                         onClick={() => {
-                          decrease(item?.id);
+                          decrease(item?._id);
                         }}
                       >
                         -
@@ -114,7 +117,7 @@ const FilledCart = ({
                         className="btn btn-primary"
                         style={{ margin: "2px" }}
                         onClick={() => {
-                          increase(item?.id);
+                          increase({ id: item?._id, products });
                         }}
                       >
                         +
@@ -132,7 +135,7 @@ const FilledCart = ({
                         color="red"
                         size={24}
                         onClick={() => {
-                          removeFromCart(item?.id);
+                          removeFromCart(item?._id);
                         }}
                       />
                     </td>

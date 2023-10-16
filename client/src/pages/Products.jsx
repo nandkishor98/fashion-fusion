@@ -1,6 +1,4 @@
 import "./Products.css";
-import {AiOutlineEye} from 'react-icons/ai'
-import {AiOutlineShoppingCart} from 'react-icons/ai'
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -10,9 +8,7 @@ import SkeletalLoader from "../components/SkeletalLoader";
 
 const Products = () => {
   const { products, loading } = useSelector((state) => state.products);
-  console.log(loading);
   const dispatch = useDispatch();
-
   const initFetch = useCallback(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
@@ -35,18 +31,22 @@ const Products = () => {
               {products && products.length > 0 ? (
                 products.map((product, index) => {
                   return (
-                    <div className="col-6 col-lg-3" key={product?.id || index}>
+                    <div className="col-6 col-lg-3" key={product?._id || index}>
                       <div className="product-card-10">
                         <div className="product-card-image">
-                          {/* <div className="badge-ribbon">
-                              <span className="badge bg-danger">Sale</span>
-                          </div> */}
+                          {product?.quantity < 1 && (
+                            <div className="badge-ribbon">
+                              <span className="badge bg-danger">
+                                Out of Stock
+                              </span>
+                            </div>
+                          )}
                           <div className="product-media">
                             <a href="#">
                               <img
                                 className="img-fluid"
                                 src={
-                                  product?.image ||
+                                  product?.images[0] ||
                                   "https://www.bootdey.com/image/380x380/FF00FF/000000"
                                 }
                                 title={product?.name || ""}
@@ -58,9 +58,9 @@ const Products = () => {
                         <div className="product-card-info">
                           <h6 className="product-title">
                             <a href="#">
-                              {product?.title.length > 30
-                                ? product.title.substring(0, 27).concat("...")
-                                : product?.title}
+                              {product?.name.length > 30
+                                ? product.name.substring(0, 27).concat("...")
+                                : product?.name}
                             </a>
                           </h6>
                           <div className="product-price">
@@ -75,17 +75,18 @@ const Products = () => {
                           <div className="product-action">
                             <Link
                               className="btn"
-                              to={`/products/${product?.id}`}
+                              to={`/products/${product?._id}`}
                             >
-                              <i className="AiOutlineEye"><AiOutlineEye/></i>
+                              <i className="fa fa-eye"></i>
                             </Link>
                             <button
                               className="btn"
                               onClick={() => {
                                 dispatch(addToCart(product));
                               }}
+                              disabled={product.quantity < 1 ? true : false}
                             >
-                              <i className="AiOutlineShoppingCart"><AiOutlineShoppingCart/></i>
+                              <i className="fa fa-shopping-cart"></i>
                             </button>
                           </div>
                         </div>
@@ -127,3 +128,6 @@ const Products = () => {
 };
 
 export default Products;
+
+// Product List
+// product list page (selector/ dispatch)
