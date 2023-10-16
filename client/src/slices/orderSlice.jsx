@@ -28,7 +28,7 @@ const orderSlice = createSlice({
       .addCase(create.fulfilled, (state, action) => {
         // Add user to the state array
         state.loading = false;
-        state.orders = [...action.payload];
+        state.orders.push(action.payload.data);
       })
       .addCase(create.pending, (state) => {
         // Add user to the state array
