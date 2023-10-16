@@ -11,8 +11,9 @@ import Navbar from "./layouts/Navbar";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import AdminProducts from "./pages/admin/Products";
-import { PrivateRoute } from "./components/Routes";
 import Checkout from "./pages/Checkout";
+import { PrivateRoute } from "./components/Routes";
+import { CheckoutPageStatus } from "./components/CheckoutStatus";
 
 const adminRoutes = [
   { path: "/products", component: <AdminProducts />, role: "admin" },
@@ -32,6 +33,15 @@ function App() {
               <Route path="/about" element=<About /> />
               <Route path="/cart" element=<Cart /> />
               <Route path="/checkout" element=<Checkout /> />
+              <Route path="/checkout/success" element=<CheckoutPageStatus /> />
+              <Route
+                path="/checkout/failed"
+                element=<CheckoutPageStatus
+                  type="failure"
+                  msg="Something went wrong. Try Again"
+                  msgHeader="Transaction Failed"
+                />
+              />
               <Route path="/contact" element=<Contact /> />
               <Route path="/login" element=<Login /> />
               <Route path="/products" element=<Products /> />
@@ -48,7 +58,6 @@ function App() {
                     }
                   />
                 ))}
-
               <Route path="*" element=<ErrorPage /> />
             </Routes>
           </div>
