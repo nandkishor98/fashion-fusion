@@ -28,7 +28,10 @@ const login = async (email, password) => {
     roles: user?.roles || [],
   };
   const token = generateJWT(payload);
-  return { token };
+  return {
+    user: { name: user.name, email: user?.email, roles: user?.roles },
+    token,
+  };
 };
 
 const regenerateToken = async (email) => {

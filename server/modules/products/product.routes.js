@@ -26,21 +26,33 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", upload.array("images", 4), async (req, res, next) => {
-  try {
-    if (req.files) {
-      req.body.images = [];
-      req.files.map((file) =>
-        req.body.images.push("products/".concat(file.filename))
-      );
+router.post(
+  "/",
+  secureAPI(["admin"]),
+  upload.array("images", 4),
+  async (req, res, next) => {
+    try {
+      if (req.files) {
+        req.body.images = [];
+        req.files.map((file) =>
+          req.body.images.push("products/".concat(file.filename))
+        );
+      }
+      if (req.body.images && req.body.images.length > 0) {
+        req.files = req.body.images;
+        req.body.images = [];
+        req.files.map((file) => {
+          req.body.images.push(file);
+        });
+      }
+      req.body.created_by = req.currentUser;
+      const result = await Controller.create(req.body);
+      res.json({ data: result, msg: "success" });
+    } catch (e) {
+      next(e);
     }
-    req.body.created_by = req.currentUser;
-    const result = await Controller.create(req.body);
-    res.json({ data: result, msg: "success" });
-  } catch (e) {
-    next(e);
   }
-});
+);
 
 router.get("/:id", async (req, res, next) => {
   try {

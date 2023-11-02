@@ -1,4 +1,5 @@
 const Model = require("./product.model");
+const { ObjectId } = require("mongoose").Types;
 
 const create = (payload) => {
   return Model.create(payload);
@@ -70,8 +71,35 @@ const list = async (limit, page, search) => {
   return { data, total, limit, pageNum };
 };
 
-const getById = (id) => {
-  return Model.findOne({ _id: id });
+const getById = async (id) => {
+  const result = await Model.aggregate([
+    {
+      $match: {
+        _id: new ObjectId(id),
+      },
+    },
+    {
+      $lookup: {
+        from: "categories",
+        localField: "category",
+        foreignField: "_id",
+        as: "category_name",
+      },
+    },
+    {
+      $unwind: {
+        path: "$category_name",
+        preserveNullAndEmptyArrays: false,
+      },
+    },
+    {
+      $addFields: {
+        category_name: "$category_name.name",
+      },
+    },
+  ]);
+  if (result?.length === 0) return {};
+  return result[0];
 };
 
 const updateById = (id, payload) => {
