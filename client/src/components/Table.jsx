@@ -1,35 +1,31 @@
 import { Table } from "react-bootstrap";
 
-export default function Tables() {
+export default function Tables({ headers, data }) {
   return (
     <div>
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
+            {headers.length > 0
+              ? headers.map((d, idx) => {
+                  return <th key={idx}>{d}</th>;
+                })
+              : null}
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td colSpan={2}>Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
+          {data.length > 0
+            ? data.map((d, idx) => {
+                return (
+                  <tr key={idx}>
+                    <td>{idx + 1}</td>
+                    <td>{d?.name}</td>
+                    <td>{d?.quantity}</td>
+                    <td>{d?.price}</td>
+                  </tr>
+                );
+              })
+            : null}
         </tbody>
       </Table>
     </div>

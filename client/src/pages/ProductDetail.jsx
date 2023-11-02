@@ -1,83 +1,127 @@
 import "./ProductDetail.css";
-// import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
+import { useCallback, useEffect, useState } from "react";
+import { fetchProducts, getById } from "../slices/productSlice";
+import { updateCart } from "../slices/cartSlice";
 
 const ProductDetail = () => {
-  // const { id } = useParams();
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const { products, product } = useSelector((state) => state.products);
+  const [quantity, setQuantity] = useState(1);
+  const [random4Items, setRandom4Items] = useState([]);
+
+  const getProduct = useCallback(() => {
+    dispatch(getById(id));
+  }, [dispatch, id]);
+
+  const fetchAllProduct = useCallback(() => {
+    dispatch(fetchProducts({ limit: 40, page: 1 }));
+  }, [dispatch]);
+
+  const getRandomProducts = useCallback(() => {
+    const firstRandomIndex = Math.floor(Math.random() * products.length);
+    const secRandomIndex = Math.floor(Math.random() * products.length);
+    const thirdRandomIndex = Math.floor(Math.random() * products.length);
+    const fourthRandomIndex = Math.floor(Math.random() * products.length);
+    const randProduct = [
+      products[firstRandomIndex],
+      products[secRandomIndex],
+      products[thirdRandomIndex],
+      products[fourthRandomIndex],
+    ];
+    setRandom4Items(randProduct);
+  }, [products]);
+
+  useEffect(() => {
+    getProduct();
+    getRandomProducts();
+    if (products?.length === 0) fetchAllProduct();
+  }, [fetchAllProduct, getProduct, getRandomProducts, products]);
   return (
-    <section className="">
+    <section>
       <div className="container flex mt-2 d-flex justify-content-center">
         <div className="col-lg-8 border p-2 bg-white">
           <div className="row hedding m-0 pl-3 pt-0 pb-3">
-            Product Detail Design Using Bootstrap 4.0
+            {product?.quantity < 1 && (
+              <div className="text-danger">Out of Stock</div>
+            )}
           </div>
           <div className="row m-0">
             <div className="col-lg-4 left-side-product-box pb-3">
               <img
-                src="http://nicesnippets.com/demo/pd-image1.jpg"
+                src={
+                  product?.images && product?.images.length > 0
+                    ? product?.images[0]
+                    : ""
+                }
                 className="border p-3"
               />
               <span className="sub-img">
-                <img
-                  src="http://nicesnippets.com/demo/pd-image2.jpg"
-                  className="border p-2"
-                />
-                <img
-                  src="http://nicesnippets.com/demo/pd-image3.jpg"
-                  className="border p-2"
-                />
-                <img
-                  src="http://nicesnippets.com/demo/pd-image4.jpg"
-                  className="border p-2"
-                />
+                {product?.images && product?.images.length > 0
+                  ? product.images.slice(1).map((image, index) => {
+                      return (
+                        <img key={index} src={image} className="border p-2" />
+                      );
+                    })
+                  : null}
               </span>
             </div>
             <div className="col-lg-8">
               <div className="right-side-pro-detail border p-3 m-0">
                 <div className="row">
                   <div className="col-lg-12">
-                    <span>Who What Wear</span>
-                    <p className="m-0 p-0">Womens Velvet Dress</p>
+                    <span>
+                      {product?.alias ? product?.alias.toString() : ""}
+                    </span>
+                    <p className="m-0 p-0">{product?.name}</p>
                   </div>
                   <div className="col-lg-12">
-                    <p className="m-0 p-0 price-pro">$30</p>
+                    <p className="m-0 p-0 price-pro">${product?.price}</p>
                     <hr className="p-0 m-0" />
                   </div>
                   <div className="col-lg-12 pt-2">
                     <h5>Product Detail</h5>
-                    <span>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris.
-                    </span>
+                    <span>{product?.description}</span>
                     <hr className="m-0 pt-2 mt-2" />
                   </div>
                   <div className="col-lg-12">
                     <p className="tag-section">
                       <strong>Tag : </strong>
-                      <a href="">Woman</a>
-                      <a href="">,Man</a>
+                      <a href="">{product?.category_name}</a>
                     </p>
                   </div>
                   <div className="col-lg-12">
                     <h6>Quantity :</h6>
                     <input
                       type="number"
+                      min="1"
+                      max={String(product?.quantity)}
+                      value={quantity}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
                       className="form-control text-center w-100"
-                      value="1"
+                      disabled={product?.quantity < 1 ? true : false}
                     />
                   </div>
                   <div className="col-lg-12 mt-3">
                     <div className="row">
                       <div className="col-lg-6 pb-2">
-                        <a href="#" className="btn btn-danger w-100">
+                        <button
+                          className="btn btn-danger w-100"
+                          onClick={() => {
+                            dispatch(updateCart({ product, quantity }));
+                          }}
+                          disabled={product?.quantity < 1 ? true : false}
+                        >
                           Add To Cart
-                        </a>
+                        </button>
                       </div>
                       <div className="col-lg-6">
-                        <a href="#" className="btn btn-success w-100">
+                        <Link to="/checkout" className="btn btn-success w-100">
                           Shop Now
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -91,26 +135,17 @@ const ProductDetail = () => {
             </div>
           </div>
           <div className="row mt-3 p-0 text-center pro-box-section">
-            <div className="col-lg-3 pb-2">
-              <div className="pro-box border p-0 m-0">
-                <img src="http://nicesnippets.com/demo/pd-b-image1.jpg" />
-              </div>
-            </div>
-            <div className="col-lg-3 pb-2">
-              <div className="pro-box border p-0 m-0">
-                <img src="http://nicesnippets.com/demo/pd-b-images2.jpg" />
-              </div>
-            </div>
-            <div className="col-lg-3 pb-2">
-              <div className="pro-box border p-0 m-0">
-                <img src="http://nicesnippets.com/demo/pd-b-images3.jpg" />
-              </div>
-            </div>
-            <div className="col-lg-3 pb-2">
-              <div className="pro-box border p-0 m-0">
-                <img src="http://nicesnippets.com/demo/pd-b-images4.jpg" />
-              </div>
-            </div>
+            {random4Items.map((item, index) => {
+              return (
+                <div key={index} className="col-lg-3 pb-2">
+                  <div className="pro-box border p-0 m-0">
+                    <Link to={`/products/${item?._id}`}>
+                      <img src={item?.images[0]} />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

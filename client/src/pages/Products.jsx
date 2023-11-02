@@ -3,15 +3,22 @@ import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { addToCart } from "../slices/cartSlice";
-import { fetchProducts } from "../slices/productSlice";
+import {
+  fetchProducts,
+  setCurrentPage,
+  setLimit,
+} from "../slices/productSlice";
 import SkeletalLoader from "../components/SkeletalLoader";
+import Paginate from "../components/Paginate";
 
 const Products = () => {
-  const { products, loading } = useSelector((state) => state.products);
+  const { products, loading, limit, total, currentPage } = useSelector(
+    (state) => state.products
+  );
   const dispatch = useDispatch();
   const initFetch = useCallback(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    dispatch(fetchProducts({ limit, page: currentPage }));
+  }, [dispatch, currentPage, limit]);
 
   useEffect(() => {
     initFetch();
@@ -119,6 +126,14 @@ const Products = () => {
                   )}
                 </div>
               )}
+              <Paginate
+                dispatch={dispatch}
+                total={total}
+                limit={limit}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                setLimit={setLimit}
+              />
             </div>
           </div>
         </section>
