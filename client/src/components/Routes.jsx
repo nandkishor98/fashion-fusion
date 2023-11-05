@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 import { getToken } from "../utils/session";
 
 export const AdminRoute = ({ children, role }) => {
@@ -27,7 +27,7 @@ const isAdmin = (role) => {
   const token = getToken();
   if (!token) return false;
   // check for access token duration
-  const { data } = jwt_decode(token);
+  const { data } = jwtDecode(token);
   const isValid = data.roles.includes(role);
   return isValid;
 };
@@ -37,7 +37,7 @@ const isLoggedIn = () => {
   const token = getToken();
   if (!token) return false;
   // check for access token duration
-  const { exp } = jwt_decode(token);
+  const { exp } = jwtDecode(token);
   const now = new Date().valueOf();
   const isValid = new Date(now).getTime() > new Date(exp).getTime();
   return isValid;
