@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@stripe/react-stripe-js": "^2.3.1",
-    "@stripe/stripe-js": "^2.1.7",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -20,13 +18,22 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.2.0",
     "nodemon": "^3.0.1"
   },
   "scripts": {
     "start": "node .",
     "dev": "nodemon ."
   },
-  "keywords": [],
+  "keywords": [
+    "MERN",
+    "ecommerce website",
+    "bcrypt",
+    "jsonwebtoken",
+    "express",
+    "mongodb",
+    "react"
+  ],
   "author": "",
   "license": "ISC"
 }
