@@ -90,5 +90,43 @@ File Upload in Add Product Page
 <!-- 4. Set request header to form Data -->
 <!-- 5. submit the data into be from API using axios -->
 
-6. success => product successfully added => redirect to products list page
-   failure => stay in the same page => display Something went wrong message
+<!-- 6. success => product successfully added => redirect to products list page
+   failure => stay in the same page => display Something went wrong message -->
+
+Delete Product from Product List Page
+
+<!-- 1. Add the Edit and Delete Icon in the table -->
+<!-- 2. Create a hook that deletes the data using id -->
+
+<!-- 3. Add swal to confirm the decision before deletion -->
+<!-- 4. Connect the hook to the button/icons -->
+
+<!-- 5. Delete success => refetch the product list page using (dispatch and fetchProducts); fetchProducts be mindful about sending {} during dispatch -->
+
+Edit Product from Product List Page
+
+1. On button click, redirect user to the /edit page route
+2. render Edit page component
+3. get id from the browser url, using useParams hook from react-router-dom
+4. call fetchById custom hook to get the data from the api (real time)
+   alternative option
+5. front end already has that id data, we will filter from the product array and use that to load the data
+6. load and update the state of the productDetail
+7. give onChange event to make changes to the data
+8. put the data again to the server using updateHook
+9. update successful, redirect user to /products page or leave him/her on the same page
+10. show the error if occured
+
+React routing v6 admin panel change
+
+1. react router v6 install
+2. 2 layout
+   1. admin layout (JWT Token valid)
+   2. buyers layout (JWT Token invalid / no access_token )
+3. Route management v6 Outlet
+
+if logged in;
+
+admin bar / normal nav bar
+content (Component)
+footer
