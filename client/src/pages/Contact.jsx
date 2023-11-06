@@ -15,9 +15,7 @@ const Contact = () => {
                 >
                   <div className="row">
                     <div className="col-md-6 form-group mb-3">
-                      <label htmlFor className="col-form-label">
-                        Name *
-                      </label>
+                      <label className="col-form-label">Name *</label>
                       <input
                         type="text"
                         className="form-control"
@@ -27,9 +25,7 @@ const Contact = () => {
                       />
                     </div>
                     <div className="col-md-6 form-group mb-3">
-                      <label htmlFor className="col-form-label">
-                        Email *
-                      </label>
+                      <label className="col-form-label">Email *</label>
                       <input
                         type="email"
                         className="form-control"
@@ -41,9 +37,7 @@ const Contact = () => {
                   </div>
                   <div className="row">
                     <div className="col-md-12 form-group mb-3">
-                      <label htmlFor="budget" className="col-form-label">
-                        Subject
-                      </label>
+                      <label className="col-form-label">Subject</label>
                       <input
                         type="text"
                         className="form-control"
@@ -55,9 +49,7 @@ const Contact = () => {
                   </div>
                   <div className="row mb-5">
                     <div className="col-md-12 form-group mb-3">
-                      <label htmlFor="message" className="col-form-label">
-                        Message *
-                      </label>
+                      <label className="col-form-label">Message *</label>
                       <textarea
                         className="form-control"
                         name="message"

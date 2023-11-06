@@ -11,6 +11,8 @@ import {
 import SkeletalLoader from "../components/SkeletalLoader";
 import Paginate from "../components/Paginate";
 
+import { SERVER_URL } from "../constants";
+
 const Products = () => {
   const { products, loading, limit, total, currentPage } = useSelector(
     (state) => state.products
@@ -53,8 +55,11 @@ const Products = () => {
                               <img
                                 className="img-fluid"
                                 src={
-                                  product?.images[0] ||
-                                  "https://www.bootdey.com/image/380x380/FF00FF/000000"
+                                  product?.images[0] &&
+                                  product?.images[0].includes("https:")
+                                    ? product?.images[0]
+                                    : SERVER_URL + "/" + product?.images[0] ||
+                                      "https://www.bootdey.com/image/380x380/FF00FF/000000"
                                 }
                                 title={product?.name || ""}
                                 alt={product?.name || ""}

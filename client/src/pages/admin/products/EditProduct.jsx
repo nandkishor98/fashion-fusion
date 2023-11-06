@@ -1,12 +1,16 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, Form } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
+import { SERVER_URL, URLS } from "../../../constants";
 
-import { list } from "../../services/category";
-import { create } from "../../services/products";
+import { list } from "../../../services/category";
 
-export default function AddProduct() {
+import useApi from "../../../hooks/useApi";
+
+export default function EditProduct() {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { getById, updateById } = useApi();
   const [categories, setCategories] = useState([]);
   const [payload, setPayload] = useState({
     name: "",
@@ -53,7 +57,8 @@ export default function AddProduct() {
       formData.append("alias", payload?.alias);
       formData.append("brand", payload?.brand);
       formData.append("category", payload?.category);
-      const { data } = await create(formData);
+      formData.append("id", id);
+      const data = await updateById(URLS.PRODUCTS, id, formData);
       if (data.msg === "success") {
         setMsg(
           `${payload?.name} Product Added Successfully. Redirecting in 3 secs`
@@ -104,6 +109,26 @@ export default function AddProduct() {
       });
   }, [files]);
 
+  useEffect(() => {
+    const fetchD = async () => {
+      const result = await getById(URLS.PRODUCTS, id);
+      const {
+        isArchived,
+        created_at,
+        updated_at,
+        category_name,
+        _id,
+        ...rest
+      } = result;
+      setPayload((prev) => {
+        return { ...prev, ...rest };
+      });
+      setPreviews(() => {
+        return [...rest.images];
+      });
+    };
+    fetchD();
+  }, [id, getById]);
   return (
     <div>
       <Form onSubmit={(e) => handleSubmit(e)}>
@@ -116,7 +141,16 @@ export default function AddProduct() {
           {files &&
             previews &&
             previews.map((preview, idx) => (
-              <img key={idx} width="100" height="100" src={preview} />
+              <img
+                key={idx}
+                width="100"
+                height="100"
+                src={
+                  preview.includes("blob:")
+                    ? preview
+                    : SERVER_URL + "/" + preview
+                }
+              />
             ))}
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicEmail">

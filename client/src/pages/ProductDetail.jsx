@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
 import { fetchProducts, getById } from "../slices/productSlice";
 import { updateCart } from "../slices/cartSlice";
+import { SERVER_URL } from "../constants";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -53,9 +54,10 @@ const ProductDetail = () => {
             <div className="col-lg-4 left-side-product-box pb-3">
               <img
                 src={
-                  product?.images && product?.images.length > 0
+                  product?.images[0] && product?.images[0].includes("https:")
                     ? product?.images[0]
-                    : ""
+                    : SERVER_URL + "/" + product?.images[0] ||
+                      "https://www.bootdey.com/image/380x380/FF00FF/000000"
                 }
                 className="border p-3"
               />
@@ -63,7 +65,16 @@ const ProductDetail = () => {
                 {product?.images && product?.images.length > 0
                   ? product.images.slice(1).map((image, index) => {
                       return (
-                        <img key={index} src={image} className="border p-2" />
+                        <img
+                          key={index}
+                          src={
+                            image.includes("https:")
+                              ? image
+                              : SERVER_URL + "/" + image ||
+                                "https://www.bootdey.com/image/380x380/FF00FF/000000"
+                          }
+                          className="border p-2"
+                        />
                       );
                     })
                   : null}
@@ -140,7 +151,14 @@ const ProductDetail = () => {
                 <div key={index} className="col-lg-3 pb-2">
                   <div className="pro-box border p-0 m-0">
                     <Link to={`/products/${item?._id}`}>
-                      <img src={item?.images[0]} />
+                      <img
+                        src={
+                          item?.images[0] && item?.images[0].includes("https:")
+                            ? item?.images[0]
+                            : SERVER_URL + "/" + item?.images[0] ||
+                              "https://www.bootdey.com/image/380x380/FF00FF/000000"
+                        }
+                      />
                     </Link>
                   </div>
                 </div>
