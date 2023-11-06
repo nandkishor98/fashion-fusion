@@ -152,7 +152,7 @@ export default function Checkout() {
                   type="text"
                   className="form-control"
                   id="fullName"
-                  placeholder="Raktim Shrestha"
+                  placeholder="Nand Kishor"
                   value={checkout?.name}
                   onChange={(e) =>
                     setCheckout((prev) => {
