@@ -3,7 +3,7 @@ const Model = require("./category.model");
 const productModel = require("../products/product.model");
 
 const slugGenerator = (payload) => {
-  return slugify(payload);
+  return slugify(payload, { lower: true, strict: true });
 };
 
 const create = async (payload) => {
@@ -13,7 +13,7 @@ const create = async (payload) => {
 
 const list = async (limit, page, search) => {
   const pageNum = parseInt(page) || 1;
-  const size = parseInt(limit) || 5;
+  const size = parseInt(limit) || 20;
   const { name, role } = search;
   const query = {};
   if (name) {
@@ -67,7 +67,7 @@ const list = async (limit, page, search) => {
   const newData = response[0];
   let { data, total } = newData;
   total = total || 0;
-  return { data, total, limit, pageNum };
+  return { data, total, limit: size, page: pageNum };
 };
 
 const getById = (id) => {

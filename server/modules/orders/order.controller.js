@@ -122,7 +122,6 @@ const approve = (id, payload) => {
 };
 
 const updateBasedonPayment = async (stripePayload) => {
-  console.log({ stripePayload });
   const { id, status } = stripePayload;
   const checkOrder = await Model.findOne({ orderId: id });
   if (!checkOrder) throw new Error("Order not found");
