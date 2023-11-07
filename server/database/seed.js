@@ -22,7 +22,7 @@ var setup = {
     console.log("Creating Normal user");
     const userPayload = {
       name: "Nand User",
-      email: "nandyadav720@gmail.com.com",
+      email: "nandyadav720@gmail.com",
       password: await bcrypt.hash("12345", +process.env.SALT_ROUND),
       isEmailVerified: true,
     };
