@@ -120,8 +120,7 @@ export default function Checkout() {
                           : item?.name}
                       </h6>
                       <small className="text-muted">
-                        {" "}
-                        {item?.description.length > 30
+                        {item?.description && item?.description.length > 30
                           ? item?.description.substring(0, 50).concat("...")
                           : item?.description}
                       </small>
@@ -152,7 +151,7 @@ export default function Checkout() {
                   type="text"
                   className="form-control"
                   id="fullName"
-                  placeholder="Nand Kishor"
+                  placeholder="Raktim Shrestha"
                   value={checkout?.name}
                   onChange={(e) =>
                     setCheckout((prev) => {

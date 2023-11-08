@@ -54,10 +54,13 @@ const ProductDetail = () => {
             <div className="col-lg-4 left-side-product-box pb-3">
               <img
                 src={
-                  product?.images[0] && product?.images[0].includes("https:")
+                  product.images &&
+                  product.images.length > 0 &&
+                  product?.images[0].includes("https:")
                     ? product?.images[0]
-                    : SERVER_URL + "/" + product?.images[0] ||
-                      "https://www.bootdey.com/image/380x380/FF00FF/000000"
+                    : product.images && product?.images.length > 0
+                    ? SERVER_URL + "/" + product?.images[0]
+                    : "https://www.bootdey.com/image/380x380/FF00FF/000000"
                 }
                 className="border p-3"
               />
@@ -70,8 +73,9 @@ const ProductDetail = () => {
                           src={
                             image.includes("https:")
                               ? image
-                              : SERVER_URL + "/" + image ||
-                                "https://www.bootdey.com/image/380x380/FF00FF/000000"
+                              : image
+                              ? SERVER_URL + "/" + image
+                              : "https://www.bootdey.com/image/380x380/FF00FF/000000"
                           }
                           className="border p-2"
                         />
@@ -146,17 +150,21 @@ const ProductDetail = () => {
             </div>
           </div>
           <div className="row mt-3 p-0 text-center pro-box-section">
-            {random4Items.map((item, index) => {
+            {random4Items.map((product, index) => {
               return (
                 <div key={index} className="col-lg-3 pb-2">
                   <div className="pro-box border p-0 m-0">
-                    <Link to={`/products/${item?._id}`}>
+                    <Link to={`/products/${product?._id}`}>
                       <img
                         src={
-                          item?.images[0] && item?.images[0].includes("https:")
-                            ? item?.images[0]
-                            : SERVER_URL + "/" + item?.images[0] ||
-                              "https://www.bootdey.com/image/380x380/FF00FF/000000"
+                          product &&
+                          product?.images &&
+                          product?.images.length > 0 &&
+                          product?.images[0].includes("https:")
+                            ? product?.images[0]
+                            : product?.images && product?.images.length > 0
+                            ? SERVER_URL + "/" + product?.images[0]
+                            : "https://www.bootdey.com/image/380x380/FF00FF/000000"
                         }
                       />
                     </Link>

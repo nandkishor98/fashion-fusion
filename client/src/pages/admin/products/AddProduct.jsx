@@ -10,6 +10,7 @@ export default function AddProduct() {
   const [categories, setCategories] = useState([]);
   const [payload, setPayload] = useState({
     name: "",
+    description: "",
     quantity: "",
     price: "",
     alias: "",
@@ -48,6 +49,7 @@ export default function AddProduct() {
       });
       formData.append("images", files);
       formData.append("name", payload?.name);
+      formData.append("description", payload?.description);
       formData.append("quantity", payload?.quantity);
       formData.append("price", payload?.price);
       formData.append("alias", payload?.alias);
@@ -128,6 +130,19 @@ export default function AddProduct() {
             onChange={(e) => {
               setPayload((prev) => {
                 return { ...prev, name: e.target.value };
+              });
+            }}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Description</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter Description"
+            value={payload?.description}
+            onChange={(e) => {
+              setPayload((prev) => {
+                return { ...prev, description: e.target.value };
               });
             }}
           />

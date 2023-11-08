@@ -161,7 +161,7 @@ const LoginForm = ({ dispatch, login, navigate }) => {
         setError(data.payload.msg);
       }
     } catch (e) {
-      console.log(e);
+      alert(e);
     } finally {
       setTimeout(() => {
         setError("");
