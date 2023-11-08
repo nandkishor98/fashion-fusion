@@ -71,11 +71,6 @@ const list = async (limit, page, search) => {
         data: 1,
         total: 1,
       },
-    },
-    {
-      $project: {
-        "data.password": 0,
-      },
     }
   );
   const response = await Model.aggregate(query).allowDiskUse(true);
@@ -86,13 +81,13 @@ const list = async (limit, page, search) => {
 };
 
 const getById = (id) => {
-  return Model.findOne({ id });
+  return Model.findOne({ _id: id });
 };
 
 const updateById = (id, payload) => {
   // Ignoring the quantity update
   const { products, ...rest } = payload;
-  return Model.findOneAndUpdate({ id }, rest, { new: true });
+  return Model.findOneAndUpdate({ _id: id }, rest, { new: true });
 };
 
 const deleteById = async (id, payload) => {
@@ -118,7 +113,7 @@ const deleteById = async (id, payload) => {
 };
 
 const approve = (id, payload) => {
-  return Model.findOneAndUpdate({ id }, payload, { new: true });
+  return Model.findOneAndUpdate({ _id: id }, payload, { new: true });
 };
 
 const updateBasedonPayment = async (stripePayload) => {
