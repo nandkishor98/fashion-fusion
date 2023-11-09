@@ -38,27 +38,33 @@ export default function Tables({ headers, data, remove, msg, url }) {
           </tr>
         </thead>
         <tbody>
-          {data.length > 0
-            ? data.map((d, idx) => {
-                return (
-                  <tr key={idx}>
-                    <td>{idx + 1}</td>
-                    <td>{d?.name}</td>
-                    <td>{d?.quantity}</td>
-                    <td>{d?.price}</td>
-                    <td>
-                      <div className="flex d-flex justify-content-evenly">
-                        <BsFillTrashFill
-                          color="red"
-                          onClick={() => handleDelete(d?._id)}
-                        />
-                        <BsFillPencilFill onClick={() => handleEdit(d?._id)} />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            : null}
+          {data.length > 0 ? (
+            data.map((d, idx) => {
+              return (
+                <tr key={idx}>
+                  <td width="5%">{idx + 1}</td>
+                  <td>{d?.name}</td>
+                  <td>{d?.quantity}</td>
+                  <td>{d?.price}</td>
+                  <td width={"10%"}>
+                    <div className="flex d-flex justify-content-evenly">
+                      <BsFillTrashFill
+                        color="red"
+                        onClick={() => handleDelete(d?._id)}
+                      />
+                      <BsFillPencilFill onClick={() => handleEdit(d?._id)} />
+                    </div>
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td className="text-center" colSpan={5}>
+                No Products
+              </td>
+            </tr>
+          )}
         </tbody>
       </Table>
     </div>

@@ -6,4 +6,5 @@ export const URLS = {
   CATEGORIES: version + "/categories",
   ORDERS: version + "/orders",
   PRODUCTS: version + "/products",
+  USERS: version + "/users",
 };
