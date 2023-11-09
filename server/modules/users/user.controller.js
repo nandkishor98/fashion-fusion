@@ -2,8 +2,13 @@ const bcrypt = require("bcrypt");
 
 const Model = require("./user.model");
 
-const create = (payload) => {
-  return Model.create(payload);
+const create = async (payload) => {
+  const { password, roles, ...rest } = payload;
+  rest.password = await bcrypt.hash(password, +process.env.SALT_ROUND);
+  if (roles) rest.roles = [roles];
+  rest.isEmailVerified = true;
+  rest.isActive = true;
+  return Model.create(rest);
 };
 
 const list = async (size, page, search) => {
@@ -12,7 +17,7 @@ const list = async (size, page, search) => {
   return Model.find().skip().limit();
    */
   const pageNum = parseInt(page) || 1;
-  const limit = parseInt(size) || 5;
+  const limit = parseInt(size) || 3;
   const { name, role } = search;
   const query = {};
   if (name) {
@@ -27,7 +32,7 @@ const list = async (size, page, search) => {
     },
     {
       $sort: {
-        created_at: 1,
+        created_at: -1,
       },
     },
     {
@@ -128,6 +133,7 @@ const archive = async (id, payload) => {
 module.exports = {
   archive,
   block,
+  create,
   changePassword,
   create,
   getById,

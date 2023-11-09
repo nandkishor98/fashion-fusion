@@ -26,6 +26,17 @@ router.get("/", secureAPI(["admin"]), async (req, res, next) => {
   }
 });
 
+router.post("/", secureAPI(["admin"]), async (req, res, next) => {
+  try {
+    req.body.created_by = req.currentUser;
+    req.body.updated_by = req.currentUser;
+    const result = await Controller.create(req.body);
+    res.json({ data: result, msg: "success" });
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.get("/profile", secureAPI(["admin", "user"]), async (req, res, next) => {
   try {
     const result = await Controller.getById(req.currentUser);
@@ -45,7 +56,6 @@ router.put(
         req.body.image = "users/".concat(req.file.filename);
       }
       const { id, ...rest } = req.body;
-      rest.created_by = req.currentUser;
       rest.updated_by = req.currentUser;
       const me = req.currentRoles.includes("admin")
         ? req.body.id
@@ -90,6 +100,7 @@ router.patch("/status/:id", secureAPI(["admin"]), async (req, res, next) => {
   try {
     req.body.created_by = req.currentUser;
     req.body.updated_by = req.currentUser;
+    req.body.updated_at = new Date();
     const result = await Controller.block(req.params.id, req.body);
     res.json({ data: result, msg: "success" });
   } catch (e) {
@@ -110,6 +121,7 @@ router.delete("/:id", secureAPI(["admin"]), async (req, res, next) => {
   try {
     req.body.created_by = req.currentUser;
     req.body.updated_by = req.currentUser;
+    req.body.updated_at = new Date();
     const result = await Controller.archive(req.params.id, req.body);
     res.json({ data: result, msg: "success" });
   } catch (e) {
