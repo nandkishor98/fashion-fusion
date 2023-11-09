@@ -16,13 +16,13 @@ var setup = {
       email: "nandyadav720@gmail.com",
       password: await bcrypt.hash("12345", +process.env.SALT_ROUND),
       isEmailVerified: true,
-      roles: ["admin"],
+      roles: "admin",
     };
     await Controller.create(payload);
     console.log("Creating Normal user");
     const userPayload = {
       name: "Nand User",
-      email: "nandyadav720@gmail.com",
+      email: "knand2887@gmail.com.com",
       password: await bcrypt.hash("12345", +process.env.SALT_ROUND),
       isEmailVerified: true,
     };
