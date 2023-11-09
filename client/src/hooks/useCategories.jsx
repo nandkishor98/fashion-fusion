@@ -10,12 +10,15 @@ export const useCategories = () => {
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const list = useCallback(async () => {
+  const list = useCallback(async ({ page, limit }) => {
     try {
       setLoading(true);
-      const { data } = await API.get(URLS.CATEGORIES);
+      const { data } = await API.get(
+        `${URLS.CATEGORIES}?page=${page}&limit=${limit}`
+      );
       setData(data?.data?.data);
       setMsg("Categories fetched Successfully");
+      return data.data;
     } catch (e) {
       const errMsg = e.response
         ? e.response.data.msg
