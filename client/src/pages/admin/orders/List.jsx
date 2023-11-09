@@ -1,19 +1,27 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
-import { TiTickOutline } from "react-icons/ti";
+import { FcApproval } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import { useOrders } from "../../../hooks/useOrders";
+import Hookpagination from "../../../components/Hookpagination";
 
 export default function ListOrders() {
   const navigate = useNavigate();
   const { data, approve, list, remove } = useOrders();
+  const [limit, setLimit] = useState(4);
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchOrders = useCallback(async () => {
-    list();
-  }, [list]);
+    const result = await list({ page: currentPage, limit: limit });
+    if (result) {
+      setTotal(result.total);
+      setCurrentPage(result.page);
+    }
+  }, [list, currentPage, limit]);
 
   const handleDelete = async (event, id) => {
     event.preventDefault();
@@ -35,7 +43,7 @@ export default function ListOrders() {
             text: "Delete Successful.",
             icon: "success",
           });
-          list();
+          list({ page: currentPage, limit: limit });
         }
       }
     } catch (e) {
@@ -67,7 +75,7 @@ export default function ListOrders() {
             text: "Approve Successful.",
             icon: "success",
           });
-          list();
+          list({ page: currentPage, limit: limit });
         }
       }
     } catch (e) {
@@ -83,7 +91,7 @@ export default function ListOrders() {
       <h1 className="text-center">Orders</h1>
       <div className="d-flex flex-row-reverse mb-2">
         <Link to="/admin/orders/add" className="btn btn-danger">
-          Add new Order
+          Add New Order
         </Link>
       </div>
       <Table striped bordered hover>
@@ -114,8 +122,7 @@ export default function ListOrders() {
                       <BsFillPencilFill
                         onClick={() => navigate(`/admin/orders/${item?._id}`)}
                       />
-                      <TiTickOutline
-                        color="green"
+                      <FcApproval
                         onClick={(e) =>
                           handleApprove(e, item?._id, item?.status)
                         }
@@ -134,6 +141,13 @@ export default function ListOrders() {
           )}
         </tbody>
       </Table>
+      <Hookpagination
+        total={total}
+        limit={limit}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        setLimit={setLimit}
+      />
     </div>
   );
 }

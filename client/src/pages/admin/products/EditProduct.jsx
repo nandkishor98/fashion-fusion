@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Alert, Button, Form } from "react-bootstrap";
+import { Alert, Button, Form, Stack } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
 import { SERVER_URL, URLS } from "../../../constants";
 
@@ -132,7 +132,7 @@ export default function EditProduct() {
   return (
     <div>
       <Form onSubmit={(e) => handleSubmit(e)}>
-        <h1 className="text-center">Add new product</h1>
+        <h1 className="text-center">Edit product</h1>
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Form.Label>Upload Product Images (Max upto 4)</Form.Label>
           <Form.Control type="file" multiple onChange={handleFiles} />
@@ -246,9 +246,19 @@ export default function EditProduct() {
             {error ? error : msg}
           </Alert>
         )}
-        <Button variant="primary" type="submit" disabled={loading}>
-          Submit
-        </Button>
+        <Stack gap={2} direction="horizontal">
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={loading}
+            style={{ width: "10rem" }}
+          >
+            Submit
+          </Button>
+          <Button variant="danger" onClick={() => navigate("/admin/products")}>
+            Go back
+          </Button>
+        </Stack>
       </Form>
     </div>
   );
