@@ -19,7 +19,7 @@ import { CheckoutPageStatus } from "./components/CheckoutStatus";
 
 // Admin routes
 import Dashboard from "./pages/admin/Dashboard";
-import { AdminProducts, AddProduct, EditProduct } from "./pages/admin/products";
+import { AdminProducts, AddProduct, EditProduct } from "./pages/admin/Products";
 import { AddCat, EditCat, ListCat } from "./pages/admin/categories";
 import { AddOrders, EditOrders, ListOrders } from "./pages/admin/orders";
 import { AddUsers, EditUsers, ListUsers } from "./pages/admin/users";
